@@ -45,7 +45,7 @@ def getItems():
         print(e)
         return jsonify({
             'error': 'Get Columns Error', 
-            'message':'Error fetching columns of All Items: ' + str(e)}), 500
+            'message':'Error fetching columns of all items: ' + str(e)}), 500
 
     # Creates json with output data
     response = jsonify({
@@ -87,7 +87,7 @@ def getProjectItems(projectNumber):
         print(e)
         return jsonify({
             'error': 'Get Columns Error', 
-            'message':'Error fetching columns of Project Items: ' + str(e)}), 500
+            'message':'Error fetching columns of project items: ' + str(e)}), 500
 
     projectName = project['Project Name']
 
@@ -100,6 +100,32 @@ def getProjectItems(projectNumber):
         'success': True})
     return response, 200
 
+# Return specified project in db
+def getProject(projectNumber):
+    try:
+        projects = db.getProject(projectNumber)
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'error': 'Get Project Error', 
+            'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}), 500 
+
+    try:
+        projectCols = db.getColumns('Projects')
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'error': 'Get Columns Error',
+            'message':'Error fetching columns of projects' + ': ' + str(e)}), 500
+
+    response = jsonify({
+        'entries': projects, 
+        'projectNumber': 'All Projects', 
+        'projectName': 'All Projects', 
+        'columns': projectCols, 
+        'success': True})
+    return response, 200
+
 # Return projects in db
 def getProjects():
     try:
@@ -108,7 +134,7 @@ def getProjects():
         print(e)
         return jsonify({
             'error': 'Get Projects Error',
-            'message':'Error fetching all Projects: ' + str(e)}), 500  
+            'message':'Error fetching all projects: ' + str(e)}), 500  
 
     try:
         projectCols = db.getColumns('Projects')
@@ -116,7 +142,7 @@ def getProjects():
         print(e)
         return jsonify({
             'error': 'Get Columns Error',
-            'message':'Error fetching columns of Project_Items' + ': ' + str(e)}), 500
+            'message':'Error fetching columns of projects' + ': ' + str(e)}), 500
 
     response = jsonify({
         'entries': projects, 

@@ -37,19 +37,28 @@ def protection_wrapper(func):
 @app.route('/get_item', methods=['GET'])
 @protection_wrapper
 def get_item():
-    return getItem
+    barcode = str(request.args.get('barcode', default=''))
+    return getItem(barcode)
     
 # Endpoint for returning All Items seen by the db
 @app.route('/get_items', methods=['GET'])
 @protection_wrapper
 def get_items():
-    return getItem()
+    return getItems()
 
 # Endpoint for getting all items in a project
 @app.route('/get_project_items', methods=['GET'])
 @protection_wrapper
 def get_project_items():
-    return getProjectItems
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    return getProjectItems(projectNumber)
+
+# Endpoint for getting specified project
+@app.route('/get_project', methods=['GET'])
+@protection_wrapper
+def get_project():
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    return getProject(projectNumber)
     
 # Endpoint for getting projects
 @app.route('/get_projects', methods=['GET'])
