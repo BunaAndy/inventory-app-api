@@ -7,7 +7,6 @@ class DBCursor():
             self.conn = pyodbc.connect(conStr)
             self.conn.autocommit = False
         except Exception as e:
-            print(e)
             raise Exception('Could not open connection to database')
 
     def __enter__(self):
