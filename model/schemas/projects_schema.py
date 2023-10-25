@@ -1,6 +1,6 @@
 from project_schema import project_schema
 
-entry_schema = {
+projects_schema = {
     'type': 'object',
     'properties': {
         'Projects' : {
