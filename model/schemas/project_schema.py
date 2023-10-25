@@ -1,4 +1,4 @@
-projectSchema = {
+project_schema = {
     'type': 'object',
     'properties': {
         'Project Number': {
