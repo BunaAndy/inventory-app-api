@@ -7,7 +7,7 @@ from connection import DBCursor
 # Returns columns of accessed table in a nicer list of string format with added
 # spaces instead of using the keys in entry dicts
 def getColumns(table):
-    query = 'select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = ?'
+    query = 'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?'
     with DBCursor() as cursor:
         cols = cursor.makeQuery(query, table)
     out = []
@@ -18,7 +18,7 @@ def getColumns(table):
 
 # Get all Projects defined in the DB
 def getAllProjects():
-    query = 'select * from Projects'
+    query = 'SELECT * FROM Projects'
     with DBCursor() as cursor:
         projs = makeEntryDicts(cursor.makeQuery(query), 'Projects')
     out = []
@@ -28,22 +28,34 @@ def getAllProjects():
     return out
 
 def getAllItems():
-    query = 'select * from All_Items'
+    query = 'SELECT * FROM All_Items'
     with DBCursor() as cursor:
         items = makeEntryDicts(cursor.makeQuery(query), 'All_Items')
     return items
 
 def getItem(barcode):
-    query = 'select * from All_Items where Barcode = ?'
+    query = 'SELECT * FROM All_Items WHERE Barcode = ?'
     with DBCursor() as cursor:
         item = makeEntryDicts(cursor.makeQuery(query, barcode), 'All_Items')
     return item
 
-def getProject(projectID):
-    query = 'select * from Project_Items where Project=?'
+def getProjectItems(projectID):
+    query = 'SELECT * FROM Project_Items WHERE Project=?'
     with DBCursor() as cursor:
         out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Project_Items')
     return out
+
+def getProject(projectID):
+    query = 'SELECT * FROM Projects WHERE ProjectNumber=?'
+    with DBCursor() as cursor:
+        out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Projects')
+    return out
+
+def getUsers(username):
+    query = 'SELECT * FROM Users WHERE Username=?'
+    with DBCursor() as cursor:
+        users = cursor.makeQuery(query, username)
+    return users
 
 # Util function to "prettify" all entries, creating dicts for json transfer
 # and using formatted column names
