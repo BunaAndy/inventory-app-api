@@ -27,6 +27,24 @@ def getAllProjects():
         out.append(proj)
     return out
 
+def getAllItems():
+    query = 'select * from All_Items'
+    with DBCursor() as cursor:
+        items = makeEntryDicts(cursor.makeQuery(query), 'All_Items')
+    return items
+
+def getItem(barcode):
+    query = 'select * from All_Items where Barcode = ?'
+    with DBCursor() as cursor:
+        item = makeEntryDicts(cursor.makeQuery(query, barcode), 'All_Items')
+    return item
+
+def getProject(projectID):
+    query = 'select * from Project_Items where Project=?'
+    with DBCursor() as cursor:
+        out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Project_Items')
+    return out
+
 # Util function to "prettify" all entries, creating dicts for json transfer
 # and using formatted column names
 def makeEntryDicts(entries, table):
