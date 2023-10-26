@@ -67,8 +67,8 @@ def getProjectItems(projectNumber):
             'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}, 500
     if len(projects) == 0:
         return {
-            'error': 'JSON Error', 
-            'message':'No project with number: ' + str(projectNumber) + ' found'}, 400
+            'error': 'Project not Found', 
+            'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
     
     project = projects[0]
     try:
