@@ -1,5 +1,4 @@
 import model.dbhandling as db
-from flask import jsonify
 
 # Return item in db
 def getItem(barcode):
@@ -8,25 +7,25 @@ def getItem(barcode):
         item = db.getItem(barcode)
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Project Error', 
-            'message':'Error fetching item ' + str(barcode) + ': ' + str(e)}), 500
+            'message':'Error fetching item ' + str(barcode) + ': ' + str(e)}, 500
     
     try:
         itemCols = db.getColumns('All_Items')
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Columns Error', 
-            'message':'Error fetching columns of All Items: ' + str(e)}), 500
+            'message':'Error fetching columns of All Items: ' + str(e)}, 500
 
     # Creates json with output data
-    response = jsonify({
+    response = {
         'entries': item,
         'projectNumber': 'Item',
         'projectName': 'Item',
         'columns': itemCols,
-        'success': True})
+        'success': True}
     return response, 200
 
 # Return all items in db
@@ -35,25 +34,25 @@ def getItems():
         items = db.getAllItems()
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get All Items Error', 
-            'message':'Error fetching all items: ' + str(e)}), 500
+            'message':'Error fetching all items: ' + str(e)}, 500
     
     try:
         allItemsCols = db.getColumns('All_Items')
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Columns Error', 
-            'message':'Error fetching columns of all items: ' + str(e)}), 500
+            'message':'Error fetching columns of all items: ' + str(e)}, 500
 
     # Creates json with output data
-    response = jsonify({
+    response = {
         'entries': items,
         'projectNumber': 'All Items',
         'projectName': 'All Items',
         'columns': allItemsCols,
-        'success': True})
+        'success': True}
     return response, 200
 
 # Return all items in project in db
@@ -63,41 +62,41 @@ def getProjectItems(projectNumber):
         projects = db.getProject(projectNumber)
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Project Error', 
-            'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}), 500
+            'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}, 500
     if len(projects) == 0:
-        return jsonify({
+        return {
             'error': 'JSON Error', 
-            'message':'No project with name: ' + str(projectNumber) + ' found'}), 400
+            'message':'No project with number: ' + str(projectNumber) + ' found'}, 400
     
     project = projects[0]
     try:
         projectData = db.getProjectItems(projectNumber)
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Project Items Error', 
-            'message':'Error fetching project items in project ' + str(projectNumber) + ': ' + str(e)}), 500
+            'message':'Error fetching project items in project ' + str(projectNumber) + ': ' + str(e)}, 500
     
     project = projects[0]
     try:
         projectCols = db.getColumns('Project_Items')
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Columns Error', 
-            'message':'Error fetching columns of project items: ' + str(e)}), 500
+            'message':'Error fetching columns of project items: ' + str(e)}, 500
 
     projectName = project['Project Name']
 
     # Creates json with output data
-    response = jsonify({
+    response = {
         'entries': projectData,
         'projectNumber': projectNumber,
         'projectName': projectName,
         'columns': projectCols,
-        'success': True})
+        'success': True}
     return response, 200
 
 # Return specified project in db
@@ -106,24 +105,24 @@ def getProject(projectNumber):
         projects = db.getProject(projectNumber)
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Project Error', 
-            'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}), 500 
+            'message':'Error fetching project ' + str(projectNumber) + ': ' + str(e)}, 500 
 
     try:
         projectCols = db.getColumns('Projects')
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Columns Error',
-            'message':'Error fetching columns of projects' + ': ' + str(e)}), 500
+            'message':'Error fetching columns of projects' + ': ' + str(e)}, 500
 
-    response = jsonify({
+    response = {
         'entries': projects, 
         'projectNumber': 'All Projects', 
         'projectName': 'All Projects', 
         'columns': projectCols, 
-        'success': True})
+        'success': True}
     return response, 200
 
 # Return projects in db
@@ -132,22 +131,22 @@ def getProjects():
         projects = db.getAllProjects()
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Projects Error',
-            'message':'Error fetching all projects: ' + str(e)}), 500  
+            'message':'Error fetching all projects: ' + str(e)}, 500  
 
     try:
         projectCols = db.getColumns('Projects')
     except Exception as e:
         print(e)
-        return jsonify({
+        return {
             'error': 'Get Columns Error',
-            'message':'Error fetching columns of projects' + ': ' + str(e)}), 500
+            'message':'Error fetching columns of projects' + ': ' + str(e)}, 500
 
-    response = jsonify({
+    response = {
         'entries': projects, 
         'projectNumber': 'All Projects', 
         'projectName': 'All Projects', 
         'columns': projectCols, 
-        'success': True})
+        'success': True}
     return response, 200

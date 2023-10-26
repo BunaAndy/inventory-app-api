@@ -9,7 +9,7 @@ from model.schemas.item_schema import item_schema
 from model.schemas.items_schema import items_schema
 from model.schemas.project_schema import project_schema
 from model.schemas.projects_schema import projects_schema
-from functions.get_functions import *
+from controller.functions.get_functions import *
 from functools import wraps
 
 app = Flask(__name__)

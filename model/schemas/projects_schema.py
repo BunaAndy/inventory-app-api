@@ -1,4 +1,4 @@
-from project_schema import project_schema
+from model.schemas.project_schema import project_schema
 
 projects_schema = {
     'type': 'object',

@@ -2,7 +2,7 @@ import pyodbc
 import hashlib
 import re
 import datetime
-from connection import DBCursor
+from model.connection import DBCursor
 
 # --------- ALL ITEMS ---------
 

@@ -1,5 +1,5 @@
 import pyodbc
-from connection_string import connection_string as conStr
+from model.connection_string import connection_string as conStr
 
 class DBCursor():
     def __init__(self):
@@ -13,9 +13,12 @@ class DBCursor():
         self.curs = self.conn.cursor()
         return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, tb):
+        if exc_type is not None:
+            print(exc_type, exc_value, tb)
         self.conn.commit()
         self.curs.close()
+        return True
 
     def makeQuery(self, query, *args):
         try: 
