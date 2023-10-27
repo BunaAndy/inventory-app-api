@@ -20,6 +20,60 @@ def getAllItems():
         items = makeEntryDicts(cursor.makeQuery(query), 'All_Items')
     return items
 
+def addItems(items):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item does not exist
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+            # Then if it does not, add the item to the db
+             item['Barcode'],
+             item['Name'],
+             item['Catalog']))
+
+    query = f'''
+    IF NOT EXISTS (SELECT 1 FROM Project_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
+    BEGIN  
+        INSERT INTO Project_Items values (?, ?, ?);
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
+
+def updateItems(items):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+            # Then if it does, update the values
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+            # Where they match the criteria
+             item['Barcode'],
+             item['Name'],
+             item['Catalog']))
+
+    query = f'''
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Barcode = ?,
+        Name = ?,
+        Catalog = ?
+        WHERE (Barcode = ? OR Name = ? OR Catalog = ?);
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
+
 # --------- PROJECT ITEMS ---------
 
 # Get items from a specified project
@@ -28,6 +82,65 @@ def getProjectItems(projectID):
     with DBCursor() as cursor:
         out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Project_Items')
     return out
+
+def addProjectItems(items):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item does not exist
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             item['Project'],
+            # Then if it does not, add the item to the db
+             item['Barcode'],
+             item['Name'],
+             item['Project'],
+             item['Quantity'],
+             item['Quantity Needed'],
+             item['Catalog']))
+
+    query = f'''
+    IF NOT EXISTS (SELECT 1 FROM Project_Items WHERE (Barcode = ? OR Name = ? OR Catalog = ?) AND Project = ?)  
+    BEGIN  
+        INSERT INTO Project_Items values (?, ?, ?, ?, ?);
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
+
+def updateProjectItems(items):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             item['Project'],
+            # Then if it does, update the quantities
+             item['Quantity'],
+             item['Quantity Needed'],
+            # Where the it matches the criteria 
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             item['Project']))
+
+    query = f'''
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE (Barcode = ? OR Name = ? OR Catalog = ?) AND Project = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Quantity = Quantity + ?,
+        Quantity_Needed = ?
+        WHERE (Barcode = ? OR Name = ? OR Catalog = ?)
+        AND Project = ?;
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
 
 # --------- PROJECTS ---------
 
