@@ -80,6 +80,9 @@ def makeEntryDicts(entries, table):
     for entry in entries:
         entryDict = {}
         for index, col in enumerate(cols):
-            entryDict[col] = entry[index]
+            val = entry[index]
+            if (val == None):
+                val = ''
+            entryDict[col] = val
         newEntries.append(entryDict.copy())
     return newEntries
