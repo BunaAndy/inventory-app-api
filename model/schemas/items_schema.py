@@ -6,9 +6,12 @@ items_schema = {
         'Entries' : {
             'type' : 'array',
             'items' : item_schema,
+        },
+        'Project' : {
+            'type' : 'string',
         }
     },
     'required': [
-        'Entries'
+        'Entries', 'Project'
     ],
 }

@@ -2,13 +2,13 @@ import model.dbhandling as db
 
 # Return item in db
 def getItem(barcode):
-    # Check that project exists before querying
+    # Find item by barcode
     try:
         item = db.getItem(barcode)
     except Exception as e:
         print(e)
         return {
-            'error': 'Get Project Error', 
+            'error': 'Get Item Error', 
             'message':'Error fetching item ' + str(barcode) + ': ' + str(e)}, 500
     
     try:

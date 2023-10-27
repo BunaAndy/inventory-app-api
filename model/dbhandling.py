@@ -34,9 +34,9 @@ def addItems(items):
              item['Catalog']))
 
     query = f'''
-    IF NOT EXISTS (SELECT 1 FROM Project_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
+    IF NOT EXISTS (SELECT 1 FROM All_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
     BEGIN  
-        INSERT INTO Project_Items values (?, ?, ?);
+        INSERT INTO All_Items values (?, ?, ?);
     END '''
 
     with DBCursor() as cursor:
@@ -61,9 +61,9 @@ def updateItems(items):
              item['Catalog']))
 
     query = f'''
-    IF EXISTS (SELECT 1 FROM Project_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
+    IF EXISTS (SELECT 1 FROM All_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
     BEGIN  
-        UPDATE Project_Items  
+        UPDATE All_Items  
         SET Barcode = ?,
         Name = ?,
         Catalog = ?
@@ -72,6 +72,34 @@ def updateItems(items):
 
     with DBCursor() as cursor:
         cursor.makeManyQueries(query, params)
+
+    # Then, update any items in the item projects page to match
+    # the new values for barcode, name, catalog
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+            # Then if it does, update the values
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+            # Where they match the criteria
+             item['Barcode'],
+             item['Name'],
+             item['Catalog']))
+
+    query = f'''
+    IF EXISTS (SELECT 1 FROM All_Items WHERE Barcode = ? OR Name = ? OR Catalog = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Barcode = ?,
+        Name = ?,
+        Catalog = ?
+        WHERE (Barcode = ? OR Name = ? OR Catalog = ?);
+    END '''
     return
 
 # --------- PROJECT ITEMS ---------

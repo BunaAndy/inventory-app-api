@@ -10,6 +10,7 @@ from model.schemas.items_schema import items_schema
 from model.schemas.project_schema import project_schema
 from model.schemas.projects_schema import projects_schema
 from controller.functions.get_functions import *
+from controller.functions.post_functions import *
 from functools import wraps
 
 app = Flask(__name__)
@@ -67,3 +68,9 @@ def get_projects():
     return getProjects()
     
 # --------- POST ENDPOINTS ---------
+
+@app.route('/add_project_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def add_project_items():
+    return addProjectItems()
