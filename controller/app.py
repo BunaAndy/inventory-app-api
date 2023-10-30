@@ -73,4 +73,13 @@ def get_projects():
 @schema.validate(items_schema)
 @protection_wrapper
 def add_project_items():
-    return addProjectItems()
+    data = request.json
+    items = data['Entries']
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    print('tag1')
+    return addProjectItems(items, projectNumber)
+
+@app.errorhandler(JsonValidationError)
+def validation_error(e):
+    print(e)
+    return {'error': str(e), 'message': [validation_error.message for validation_error  in e.errors]}, 500

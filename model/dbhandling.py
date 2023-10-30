@@ -111,7 +111,7 @@ def getProjectItems(projectID):
         out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Project_Items')
     return out
 
-def addProjectItems(items):
+def addProjectItems(items, projectNumber):
     params = []
     for item in items:
         params.append(
@@ -119,11 +119,11 @@ def addProjectItems(items):
             (item['Barcode'],
              item['Name'],
              item['Catalog'],
-             item['Project'],
+             projectNumber,
             # Then if it does not, add the item to the db
              item['Barcode'],
              item['Name'],
-             item['Project'],
+             projectNumber,
              item['Quantity'],
              item['Quantity Needed'],
              item['Catalog']))
@@ -131,14 +131,14 @@ def addProjectItems(items):
     query = f'''
     IF NOT EXISTS (SELECT 1 FROM Project_Items WHERE (Barcode = ? OR Name = ? OR Catalog = ?) AND Project = ?)  
     BEGIN  
-        INSERT INTO Project_Items values (?, ?, ?, ?, ?);
+        INSERT INTO Project_Items values (?, ?, ?, ?, ?, ?);
     END '''
 
     with DBCursor() as cursor:
         cursor.makeManyQueries(query, params)
     return
 
-def updateProjectItems(items):
+def updateProjectItems(items, projectNumber):
     params = []
     for item in items:
         params.append(
@@ -146,7 +146,7 @@ def updateProjectItems(items):
             (item['Barcode'],
              item['Name'],
              item['Catalog'],
-             item['Project'],
+             projectNumber,
             # Then if it does, update the quantities
              item['Quantity'],
              item['Quantity Needed'],
@@ -154,14 +154,14 @@ def updateProjectItems(items):
              item['Barcode'],
              item['Name'],
              item['Catalog'],
-             item['Project']))
+             projectNumber))
 
     query = f'''
     IF EXISTS (SELECT 1 FROM Project_Items WHERE (Barcode = ? OR Name = ? OR Catalog = ?) AND Project = ?)  
     BEGIN  
         UPDATE Project_Items  
         SET Quantity = Quantity + ?,
-        Quantity_Needed = ?
+        Quantity_Needed = Quantity_Needed + ?
         WHERE (Barcode = ? OR Name = ? OR Catalog = ?)
         AND Project = ?;
     END '''
