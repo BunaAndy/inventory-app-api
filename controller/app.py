@@ -76,8 +76,18 @@ def add_project_items():
     data = request.json
     items = data['Entries']
     projectNumber = str(request.args.get('projectNumber', default=''))
-    print('tag1')
     return addProjectItems(items, projectNumber)
+
+@app.route('/add_project', methods=['POST'])
+@schema.validate(project_schema)
+@protection_wrapper
+def add_project():
+    data = request.json
+    projectNumber = data['Project Number']
+    projectName = data['Project Name']
+    return addProject(projectNumber, projectName)
+
+# --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)
 def validation_error(e):
