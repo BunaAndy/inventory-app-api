@@ -16,15 +16,6 @@ def addProjectItems(items, projectNumber):
             'error': 'Project not Found', 
             'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
     
-    # Add new Items
-    try:
-        db.addProjectItems(items, projectNumber)
-    except Exception as e:
-        print(e)
-        return {
-            'error': 'Adding Items Error', 
-            'message':'Error adding items to project : ' + str(projectNumber) + ', ' + str(e)}, 500
-    
     # Update Items
     try:
         db.updateProjectItems(items, projectNumber)
@@ -33,6 +24,15 @@ def addProjectItems(items, projectNumber):
         return {
             'error': 'Update Items Error', 
             'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
+    
+    # Add new Items
+    try:
+        db.addProjectItems(items, projectNumber)
+    except Exception as e:
+        print(e)
+        return {
+            'error': 'Adding Items Error', 
+            'message':'Error adding items to project : ' + str(projectNumber) + ', ' + str(e)}, 500
 
     # Creates json with output data
     response = getProjectItems(projectNumber)
