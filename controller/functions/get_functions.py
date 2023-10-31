@@ -2,29 +2,18 @@ import model.dbhandling as db
 
 # Return item in db
 def getItem(barcode):
-    # Check that project exists before querying
+    # Find item by barcode
     try:
         item = db.getItem(barcode)
     except Exception as e:
         print(e)
         return {
-            'error': 'Get Project Error', 
+            'error': 'Get Item Error', 
             'message':'Error fetching item ' + str(barcode) + ': ' + str(e)}, 500
-    
-    try:
-        itemCols = db.getColumns('All_Items')
-    except Exception as e:
-        print(e)
-        return {
-            'error': 'Get Columns Error', 
-            'message':'Error fetching columns of All Items: ' + str(e)}, 500
 
     # Creates json with output data
     response = {
         'entries': item,
-        'projectNumber': 'Item',
-        'projectName': 'Item',
-        'columns': itemCols,
         'success': True}
     return response, 200
 

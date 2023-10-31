@@ -10,6 +10,7 @@ from model.schemas.items_schema import items_schema
 from model.schemas.project_schema import project_schema
 from model.schemas.projects_schema import projects_schema
 from controller.functions.get_functions import *
+from controller.functions.post_functions import *
 from functools import wraps
 
 app = Flask(__name__)
@@ -67,3 +68,18 @@ def get_projects():
     return getProjects()
     
 # --------- POST ENDPOINTS ---------
+
+@app.route('/add_project_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def add_project_items():
+    data = request.json
+    items = data['Entries']
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    print('tag1')
+    return addProjectItems(items, projectNumber)
+
+@app.errorhandler(JsonValidationError)
+def validation_error(e):
+    print(e)
+    return {'error': str(e), 'message': [validation_error.message for validation_error  in e.errors]}, 500
