@@ -190,6 +190,13 @@ def getAllProjects():
         out.append(proj)
     return out
 
+def addProject(projectNumber, projectName):
+    createdDate = datetime.date.today()
+    query = 'INSERT INTO Projects VALUES (?, ?, ?)'
+    with DBCursor() as cursor:
+        cursor.makeQuery(query, projectNumber, projectName, createdDate)
+    return
+
 # --------- USERS/AUTH ---------
 
 # Get a specified user in the database

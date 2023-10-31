@@ -34,6 +34,16 @@ def addProjectItems(items, projectNumber):
             'error': 'Adding Items Error', 
             'message':'Error adding items to project : ' + str(projectNumber) + ', ' + str(e)}, 500
 
-    # Creates json with output data
-    response = getProjectItems(projectNumber)
+    response = {'success': True}, 200
+    return response
+
+def addProject(projectNumber, projectName):
+    try:
+        db.addProject(projectNumber, projectName)
+    except Exception as e:
+        print(e)
+        return {
+            'error': 'Update Items Error', 
+            'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
+    response = {'success': True}, 200
     return response
