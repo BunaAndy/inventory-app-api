@@ -145,6 +145,29 @@ def updateProjectItems(items, projectNumber):
         cursor.makeManyQueries(query, params)
     return
 
+def removeProjectItems(items, projectNumber):
+    params = []
+    for item in items:
+        params.append(
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             projectNumber,
+             ))
+    query = '''
+        DELETE FROM Project_Items
+        WHERE Barcode = ? 
+        AND Name = ? 
+        AND Catalog = ? 
+        AND Project = ?'''
+    
+    with DBCursor() as cursor:
+        try:
+            cursor.makeManyQueries(query, params)
+        except Exception as e:
+            print(e)
+    return
+
 # --------- PROJECTS ---------
 
 # Get information on a singular project
