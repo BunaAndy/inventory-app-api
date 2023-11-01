@@ -25,7 +25,16 @@ def addProjectItems(items, projectNumber):
             'error': 'Update Items Error', 
             'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
     
-    # Add new Items
+    # Add new Items to all Items
+    try:
+        db.addItems(items)
+    except Exception as e:
+        print(e)
+        return {
+            'error': 'Adding Items Error', 
+            'message':'Error adding items to all items : ' + str(e)}, 500
+    
+    # Add new Project Items
     try:
         db.addProjectItems(items, projectNumber)
     except Exception as e:
