@@ -101,3 +101,29 @@ def deleteProjectItems(items, projectNumber):
     
     response = {'success': True}, 200
     return response
+
+def modifyItems(items):
+    # Update Items
+    try:
+        db.updateItems(items)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Update Items Error', 
+            'message':'Error deleting items: ' + str(e)}, 500
+
+    response = {'success': True}, 200
+    return response
+
+def deleteItems(items):
+    # Delete Items
+    try:
+        db.removeItems(items)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Delete Items Error', 
+            'message':'Error deleting items: ' + str(e)}, 500
+    
+    response = {'success': True}, 200
+    return response

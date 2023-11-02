@@ -5,10 +5,7 @@ from flask_json_schema import JsonSchema, JsonValidationError
 import os
 import jwt
 import hashlib
-from model.schemas.item_schema import item_schema
-from model.schemas.items_schema import items_schema
-from model.schemas.project_schema import project_schema
-from model.schemas.projects_schema import projects_schema
+from model.schemas import *
 from controller.functions.get_functions import *
 from controller.functions.post_functions import *
 from functools import wraps
@@ -70,7 +67,7 @@ def get_projects():
 # --------- POST ENDPOINTS ---------
 
 @app.route('/add_project_items', methods=['POST'])
-@schema.validate(items_schema)
+@schema.validate(project_items_schema)
 @protection_wrapper
 def add_project_items():
     data = request.json
@@ -88,7 +85,7 @@ def add_project():
     return addProject(projectNumber, projectName)
 
 @app.route('/modify_project_items', methods=['POST'])
-@schema.validate(items_schema)
+@schema.validate(project_items_schema)
 @protection_wrapper
 def modify_project_items():
     data = request.json
@@ -97,13 +94,29 @@ def modify_project_items():
     return modifyProjectItems(items, projectNumber)
 
 @app.route('/delete_project_items', methods=['POST'])
-@schema.validate(items_schema)
+@schema.validate(project_items_schema)
 @protection_wrapper
 def delete_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
     items = data['Entries']
     return deleteProjectItems(items, projectNumber)
+
+@app.route('/modify_all_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def modify_all_items():
+    data = request.json
+    items = data['Entries']
+    return modifyItems(items)
+
+@app.route('/delete_all_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def delete_all_items():
+    data = request.json
+    items = data['Entries']
+    return deleteItems(items)
 
 # --------- ERROR HANDLING ---------
 
