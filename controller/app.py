@@ -87,6 +87,24 @@ def add_project():
     projectName = data['Project Name']
     return addProject(projectNumber, projectName)
 
+@app.route('/modify_project_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def modify_project_items():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return modifyProjectItems(items, projectNumber)
+
+@app.route('/delete_project_items', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def delete_project_items():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return deleteProjectItems(items, projectNumber)
+
 # --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)

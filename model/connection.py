@@ -23,7 +23,7 @@ class DBCursor():
     def makeQuery(self, query, *args):
         try: 
             result = self.curs.execute(query, *args)
-        except pyodbc.DatabaseError as e:
+        except Exception as e:
             self.conn.rollback()
             raise Exception("Failed to execute query: " + e)
         out = []
@@ -38,8 +38,8 @@ class DBCursor():
         out = []
         try:
             self.curs.executemany(query, params)
-        except pyodbc.DatabaseError as e:
+        except Exception as e:
             self.conn.rollback()
-            raise Exception("Failed to execute query: " + e)
+            raise Exception("Failed to execute queries: " + e)
         self.conn.commit()
         return []

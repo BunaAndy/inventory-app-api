@@ -3,7 +3,7 @@ from model.schemas.project_schema import project_schema
 projects_schema = {
     'type': 'object',
     'properties': {
-        'Projects' : {
+        'Entries' : {
             'type' : 'array',
             'items' : project_schema,
         }
