@@ -127,6 +127,22 @@ def delete_all_items():
     items = data['Entries']
     return deleteItems(items)
 
+@app.route('/modify_projects', methods=['POST'])
+@schema.validate(projects_schema)
+@protection_wrapper
+def modify_projects():
+    data = request.json
+    items = data['Entries']
+    return modifyProjects(items)
+
+@app.route('/delete_projects', methods=['POST'])
+@schema.validate(projects_schema)
+@protection_wrapper
+def delete_projects():
+    data = request.json
+    items = data['Entries']
+    return deleteProjects(items)
+
 # --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)
