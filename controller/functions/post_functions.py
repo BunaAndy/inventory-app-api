@@ -38,6 +38,33 @@ def addProjectItems(items, projectNumber):
     response = {'success': True}, 200
     return response
 
+def incrementProjectItems(items, projectNumber):
+    # Check that project exists before querying
+    try:
+        projs = db.getProject(projectNumber)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Get Project Error', 
+            'message':'Error finding project ' + str(projectNumber) + ': ' + str(e)}, 500
+
+    if len(projs) == 0:
+        return {
+            'error': 'Project not Found', 
+            'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
+    
+    # Update Items
+    try:
+        db.incrementProjectItemQuantities(items, projectNumber)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Update Items Error', 
+            'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
+
+    response = {'success': True}, 200
+    return response
+
 def addProject(projectNumber, projectName):
     try:
         db.addProject(projectNumber, projectName)

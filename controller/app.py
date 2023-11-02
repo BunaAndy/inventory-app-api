@@ -84,6 +84,15 @@ def add_project():
     projectName = data['Project Name']
     return addProject(projectNumber, projectName)
 
+@app.route('/increment_project_items', methods=['POST'])
+@schema.validate(project_items_schema)
+@protection_wrapper
+def increment_project_items():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return incrementProjectItems(items, projectNumber)
+
 @app.route('/modify_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper

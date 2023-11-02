@@ -170,7 +170,7 @@ def addProjectItems(items, projectNumber):
         cursor.makeManyQueries(query, params)
     return
 
-def updateProjectItems(items, projectNumber):
+def incrementProjectItemQuantities(items, projectNumber):
     params = []
     for item in items:
         params.append(
@@ -194,6 +194,38 @@ def updateProjectItems(items, projectNumber):
         UPDATE Project_Items  
         SET Quantity = Quantity + ?,
         Quantity_Needed = Quantity_Needed + ?
+        WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
+        AND Project = ?;
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
+
+def updateProjectItems(items, projectNumber):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             projectNumber,
+            # Then if it does, update the quantities
+             item['Quantity'],
+             item['Quantity Needed'],
+            # Where the it matches the criteria 
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             projectNumber))
+
+    query = f'''
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = '')) AND Project = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Quantity = ?,
+        Quantity_Needed = ?
         WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
         AND Project = ?;
     END '''
