@@ -24,6 +24,7 @@ class DBCursor():
         try: 
             result = self.curs.execute(query, *args)
         except Exception as e:
+            print(e)
             self.conn.rollback()
             raise Exception("Failed to execute query: " + e)
         out = []
@@ -35,10 +36,12 @@ class DBCursor():
         return out
     
     def makeManyQueries(self, query, params):
-        out = []
+        if len(params) == 0:
+            return []
         try:
             self.curs.executemany(query, params)
         except Exception as e:
+            print(e)
             self.conn.rollback()
             raise Exception("Failed to execute queries: " + e)
         self.conn.commit()

@@ -48,29 +48,86 @@ def updateItems(items):
     for item in items:
         params.append(
             # First, ensure item exists
-            (item['Barcode'],
-             item['Name'],
-             item['Catalog'],
+            (item['Name'],
             # Then if it does, update the values
              item['Barcode'],
-             item['Name'],
              item['Catalog'],
             # Where they match the criteria
-             item['Barcode'],
-             item['Name'],
-             item['Catalog']))
-
+             item['Name']))
     query = f'''
-    IF EXISTS (SELECT 1 FROM All_Items WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))  
+    IF EXISTS (SELECT 1 FROM All_Items WHERE Name = ?)  
     BEGIN  
         UPDATE All_Items  
         SET Barcode = ?,
         Catalog = ?
-        WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''));
+        WHERE Name = ?;
     END '''
 
     with DBCursor() as cursor:
         cursor.makeManyQueries(query, params)
+    
+    # Now update Project Items
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Name'],
+            # Then if it does, update the values
+             item['Barcode'],
+             item['Catalog'],
+            # Where they match the criteria
+             item['Name']))
+
+    query = query = f'''
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE Name = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Barcode = ?,
+        Catalog = ?
+        WHERE Name = ?;
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    
+    return
+
+def removeItems(items):
+    params = []
+    for item in items:
+        params.append(
+            # Delete Items matching criteria
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],))
+
+    query = '''
+        DELETE FROM All_Items
+        WHERE Barcode = ? 
+        AND Name = ? 
+        AND Catalog = ?'''
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    
+    # Now update the rest of the project items
+    params = []
+    for item in items:
+        params.append(
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog']))
+
+    query = '''
+        DELETE FROM Project_Items
+        WHERE Barcode = ? 
+        AND Name = ? 
+        AND Catalog = ?'''
+    
+    with DBCursor() as cursor:
+        try:
+            cursor.makeManyQueries(query, params)
+        except Exception as e:
+            print(e)
     return
 
 # --------- PROJECT ITEMS ---------
@@ -152,8 +209,8 @@ def removeProjectItems(items, projectNumber):
             (item['Barcode'],
              item['Name'],
              item['Catalog'],
-             projectNumber,
-             ))
+             projectNumber))
+    print(params)
     query = '''
         DELETE FROM Project_Items
         WHERE Barcode = ? 
