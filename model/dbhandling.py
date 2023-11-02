@@ -170,7 +170,7 @@ def addProjectItems(items, projectNumber):
         cursor.makeManyQueries(query, params)
     return
 
-def updateProjectItems(items, projectNumber):
+def incrementProjectItemQuantities(items, projectNumber):
     params = []
     for item in items:
         params.append(
@@ -202,6 +202,30 @@ def updateProjectItems(items, projectNumber):
         cursor.makeManyQueries(query, params)
     return
 
+def updateProjectItems(items, projectNumber):
+    params = []
+    for item in items:
+        params.append(
+            # Change quantity
+            (item['Quantity'],
+             item['Quantity Needed'],
+            # Where the it matches the criteria 
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             projectNumber))
+
+    query = f'''
+    UPDATE Project_Items  
+    SET Quantity = ?,
+    Quantity_Needed = ?
+    WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
+    AND Project = ?;'''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+    return
+
 def removeProjectItems(items, projectNumber):
     params = []
     for item in items:
@@ -210,7 +234,7 @@ def removeProjectItems(items, projectNumber):
              item['Name'],
              item['Catalog'],
              projectNumber))
-    print(params)
+
     query = '''
         DELETE FROM Project_Items
         WHERE Barcode = ? 
@@ -250,6 +274,63 @@ def addProject(projectNumber, projectName):
     query = 'INSERT INTO Projects VALUES (?, ?, ?)'
     with DBCursor() as cursor:
         cursor.makeQuery(query, projectNumber, projectName, createdDate)
+    return
+
+def removeProjects(projects):
+    params = []
+    for proj in projects:
+        if (proj['Project Name'] == 'Inventory'):
+            continue
+        params.append(
+            (proj['Project Name'], 
+             proj['Project Number']))
+
+    query = '''
+        DELETE FROM Projects
+        WHERE ProjectName = ? 
+        AND ProjectNumber = ?'''
+    
+    with DBCursor() as cursor:
+        try:
+            cursor.makeManyQueries(query, params)
+        except Exception as e:
+            print(e)
+    
+    params = []
+    for proj in projects:
+        params.append(
+            (proj['Project Number']))
+
+    query = '''
+    DELETE FROM Project_Items
+    WHERE Project = ?
+    '''
+    with DBCursor() as cursor:
+        try:
+            cursor.makeManyQueries(query, params)
+        except Exception as e:
+            print(e)
+    return
+
+def updateProjects(projects):
+    params = []
+    for proj in projects:
+        if (proj['Project Name'] == 'Inventory'):
+            continue
+        params.append(
+            (proj['Project Name'], 
+             proj['Project Number']))
+
+    query = '''
+        UPDATE Projects
+        SET ProjectName = ? 
+        WHERE ProjectNumber = ?'''
+    
+    with DBCursor() as cursor:
+        try:
+            cursor.makeManyQueries(query, params)
+        except Exception as e:
+            print(e)
     return
 
 # --------- USERS/AUTH ---------

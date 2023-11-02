@@ -84,6 +84,15 @@ def add_project():
     projectName = data['Project Name']
     return addProject(projectNumber, projectName)
 
+@app.route('/increment_project_items', methods=['POST'])
+@schema.validate(project_items_schema)
+@protection_wrapper
+def increment_project_items():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return incrementProjectItems(items, projectNumber)
+
 @app.route('/modify_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
@@ -117,6 +126,22 @@ def delete_all_items():
     data = request.json
     items = data['Entries']
     return deleteItems(items)
+
+@app.route('/modify_projects', methods=['POST'])
+@schema.validate(projects_schema)
+@protection_wrapper
+def modify_projects():
+    data = request.json
+    items = data['Entries']
+    return modifyProjects(items)
+
+@app.route('/delete_projects', methods=['POST'])
+@schema.validate(projects_schema)
+@protection_wrapper
+def delete_projects():
+    data = request.json
+    items = data['Entries']
+    return deleteProjects(items)
 
 # --------- ERROR HANDLING ---------
 
