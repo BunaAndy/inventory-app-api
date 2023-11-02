@@ -54,7 +54,6 @@ def updateItems(items):
              item['Catalog'],
             # Where they match the criteria
              item['Name']))
-    print(params)
     query = f'''
     IF EXISTS (SELECT 1 FROM All_Items WHERE Name = ?)  
     BEGIN  
