@@ -143,6 +143,15 @@ def delete_projects():
     items = data['Entries']
     return deleteProjects(items)
 
+@app.route('/pull_from_stock', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+def pull_from_stock():
+    data = request.json
+    items = data['Entries']
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    return pullFromStock(items, projectNumber)
+
 # --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)

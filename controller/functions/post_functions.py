@@ -120,6 +120,38 @@ def deleteProjectItems(items, projectNumber):
     response = {'success': True}, 200
     return response
 
+def pullFromStock(items, projectNumber):
+    try:
+        projs = db.getProject(projectNumber)
+    except Exception as e:
+        return {
+            'error': 'Get Project Error', 
+            'message':'Error finding project ' + str(projectNumber) + ': ' + str(e)}, 500
+
+    if len(projs) == 0:
+        return {
+            'error': 'Project not Found', 
+            'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
+    
+    # Pull Items
+    try:
+        db.pullStock(items)
+    except Exception as e:
+        return {
+            'error': 'Delete Items Error', 
+            'message':'Error deleting items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
+    
+    # Pull Items
+    try:
+        db.incrementProjectItemQuantities(items, projectNumber)
+    except Exception as e:
+        return {
+            'error': 'Pull Items Error', 
+            'message':'Error pulling items into project : ' + str(projectNumber) + ', ' + str(e)}, 500
+    
+    response = {'success': True}, 200
+    return response
+
 # --------- PROJECTS ---------
 
 def addProject(projectNumber, projectName):
@@ -155,7 +187,6 @@ def deleteProjects(items):
             'message':'Error deleting projects : ' + str(e)}, 500
     response = {'success': True}, 200
     return response
-    return
 
 # --------- ITEMS ---------
 

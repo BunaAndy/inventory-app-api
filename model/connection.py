@@ -7,6 +7,7 @@ class DBCursor():
             self.conn = pyodbc.connect(conStr)
             self.conn.autocommit = False
         except Exception as e:
+            print(str(e))
             raise Exception('Could not open connection to database')
 
     def __enter__(self):
@@ -24,9 +25,9 @@ class DBCursor():
         try: 
             result = self.curs.execute(query, *args)
         except Exception as e:
-            print(e)
+            print(str(e))
             self.conn.rollback()
-            raise Exception("Failed to execute query: " + e)
+            raise Exception("Failed to execute query: " + str(e))
         out = []
         try:
             out = result.fetchall()
@@ -41,8 +42,8 @@ class DBCursor():
         try:
             self.curs.executemany(query, params)
         except Exception as e:
-            print(e)
+            print(str(e))
             self.conn.rollback()
-            raise Exception("Failed to execute queries: " + e)
+            raise Exception("Failed to execute queries: " + str(e))
         self.conn.commit()
         return []
