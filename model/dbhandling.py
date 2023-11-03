@@ -181,7 +181,6 @@ def incrementProjectItemQuantities(items, projectNumber):
              projectNumber,
             # Then if it does, update the quantities
              item['Quantity'],
-             item['Quantity Needed'],
             # Where the it matches the criteria 
              item['Barcode'],
              item['Name'],
@@ -192,8 +191,7 @@ def incrementProjectItemQuantities(items, projectNumber):
     IF EXISTS (SELECT 1 FROM Project_Items WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = '')) AND Project = ?)  
     BEGIN  
         UPDATE Project_Items  
-        SET Quantity = Quantity + ?,
-        Quantity_Needed = Quantity_Needed + ?
+        SET Quantity = Quantity + ?
         WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
         AND Project = ?;
     END '''
@@ -247,6 +245,36 @@ def removeProjectItems(items, projectNumber):
             cursor.makeManyQueries(query, params)
         except Exception as e:
             print(e)
+    return
+
+def pullStock(items):
+    params = []
+    for item in items:
+        params.append(
+            # First, ensure item exists
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             'Inventory',
+            # Then if it does, update the quantities
+             item['Quantity'],
+            # Where the it matches the criteria 
+             item['Barcode'],
+             item['Name'],
+             item['Catalog'],
+             'Inventory'))
+        
+    query = f'''
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = '')) AND Project = ?)  
+    BEGIN  
+        UPDATE Project_Items  
+        SET Quantity = Quantity - ?
+        WHERE (((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
+        AND Project = ?);
+    END '''
+
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
     return
 
 # --------- PROJECTS ---------
