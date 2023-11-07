@@ -93,3 +93,15 @@ items_schema = {
         'Entries'
     ],
 }
+
+login_schema = {
+    'type': 'object',
+    'properties': {
+        'Username': {
+            'type': 'string'
+        },
+        'Password': {
+            'type': 'string'
+        }
+    }
+}
