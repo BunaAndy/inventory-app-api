@@ -124,16 +124,14 @@ def removeItems(items):
         AND Catalog = ?'''
     
     with DBCursor() as cursor:
-        try:
-            cursor.makeManyQueries(query, params)
-        except Exception as e:
-            print(e)
+        cursor.makeManyQueries(query, params)
     return
 
 # --------- PROJECT ITEMS ---------
 
 # Get items from a specified project
 def getProjectItems(projectID):
+    # raise Exception("Testing")
     query = 'SELECT * FROM Project_Items WHERE Project=?'
     with DBCursor() as cursor:
         out = makeEntryDicts(cursor.makeQuery(query, projectID), 'Project_Items')
@@ -241,10 +239,7 @@ def removeProjectItems(items, projectNumber):
         AND Project = ?'''
     
     with DBCursor() as cursor:
-        try:
-            cursor.makeManyQueries(query, params)
-        except Exception as e:
-            print(e)
+        cursor.makeManyQueries(query, params)
     return
 
 def pullStock(items):
@@ -319,10 +314,7 @@ def removeProjects(projects):
         AND ProjectNumber = ?'''
     
     with DBCursor() as cursor:
-        try:
-            cursor.makeManyQueries(query, params)
-        except Exception as e:
-            print(e)
+        cursor.makeManyQueries(query, params)
     
     params = []
     for proj in projects:
@@ -334,10 +326,7 @@ def removeProjects(projects):
     WHERE Project = ?
     '''
     with DBCursor() as cursor:
-        try:
-            cursor.makeManyQueries(query, params)
-        except Exception as e:
-            print(e)
+        cursor.makeManyQueries(query, params)
     return
 
 def updateProjects(projects):
@@ -355,10 +344,7 @@ def updateProjects(projects):
         WHERE ProjectNumber = ?'''
     
     with DBCursor() as cursor:
-        try:
-            cursor.makeManyQueries(query, params)
-        except Exception as e:
-            print(e)
+        cursor.makeManyQueries(query, params)
     return
 
 # --------- USERS/AUTH ---------

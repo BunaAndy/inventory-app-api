@@ -1,5 +1,9 @@
 import model.dbhandling as db
 from controller.functions.get_functions import *
+import hashlib
+import jwt
+import os
+
 
 # --------- PROJECT ITEMS ---------
 
@@ -215,3 +219,26 @@ def deleteItems(items):
     
     response = {'success': True}, 200
     return response
+
+# USers
+
+def login(username, password):
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
+    cipher = hashlib.sha256()
+    cipher.update(str(password).encode())
+    pash = cipher.hexdigest()[:16]
+    try:
+        users = db.getUser(username)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Delete Items Error', 
+            'message':'Error deleting items: ' + str(e)}, 500
+
+    if len(users) == 0:
+        return {'error': 'Invalid Username', 'message': 'Cannot find user ' + str(username)}, 400
+    if users[0][0] != username or users[0][1] != pash:
+        return {'error': 'Invalid Credentials', 'message': 'Incorrect Password for user ' + str(username)}, 400
+
+    token = jwt.encode({'Username': username, 'PasswordHash': pash}, SECRET_KEY, algorithm='HS256'),
+    return {'token': token}, 200

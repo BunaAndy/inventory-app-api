@@ -9,13 +9,11 @@ from model.schemas import *
 from controller.functions.get_functions import *
 from controller.functions.post_functions import *
 from functools import wraps
+from controller.authentication.authentication import token_required
 
 app = Flask(__name__)
 schema = JsonSchema(app)
 CORS(app)
-
-SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
-app.config['SECRET_KEY'] = SECRET_KEY
 
 # Ensures all endpoints will return successfully, even if an error occurs
 def protection_wrapper(func):
@@ -69,6 +67,7 @@ def get_projects():
 @app.route('/add_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
+@token_required
 def add_project_items():
     data = request.json
     items = data['Entries']
@@ -78,6 +77,7 @@ def add_project_items():
 @app.route('/add_project', methods=['POST'])
 @schema.validate(project_schema)
 @protection_wrapper
+@token_required
 def add_project():
     data = request.json
     projectNumber = data['Project Number']
@@ -87,6 +87,7 @@ def add_project():
 @app.route('/increment_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
+@token_required
 def increment_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -96,6 +97,7 @@ def increment_project_items():
 @app.route('/modify_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
+@token_required
 def modify_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -105,6 +107,7 @@ def modify_project_items():
 @app.route('/delete_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
+@token_required
 def delete_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -114,6 +117,7 @@ def delete_project_items():
 @app.route('/modify_all_items', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
+@token_required
 def modify_all_items():
     data = request.json
     items = data['Entries']
@@ -122,6 +126,7 @@ def modify_all_items():
 @app.route('/delete_all_items', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
+@token_required
 def delete_all_items():
     data = request.json
     items = data['Entries']
@@ -130,6 +135,7 @@ def delete_all_items():
 @app.route('/modify_projects', methods=['POST'])
 @schema.validate(projects_schema)
 @protection_wrapper
+@token_required
 def modify_projects():
     data = request.json
     items = data['Entries']
@@ -138,6 +144,7 @@ def modify_projects():
 @app.route('/delete_projects', methods=['POST'])
 @schema.validate(projects_schema)
 @protection_wrapper
+@token_required
 def delete_projects():
     data = request.json
     items = data['Entries']
@@ -146,11 +153,21 @@ def delete_projects():
 @app.route('/pull_from_stock', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
+@token_required
 def pull_from_stock():
     data = request.json
     items = data['Entries']
     projectNumber = str(request.args.get('projectNumber', default=''))
     return pullFromStock(items, projectNumber)
+
+@app.route('/login', methods=['POST'])
+@schema.validate(login_schema)
+@protection_wrapper
+def login_EP():
+    data = request.json
+    username = data['Username']
+    password = data['Password']
+    return login(username, password)
 
 # --------- ERROR HANDLING ---------
 
