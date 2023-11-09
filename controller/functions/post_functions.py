@@ -236,9 +236,9 @@ def login(username, password):
             'message':'Error deleting items: ' + str(e)}, 500
 
     if len(users) == 0:
-        return {'error': 'Invalid Username', 'message': 'Cannot find user ' + str(username)}, 400
+        return {'error': 'Invalid Username', 'message': 'Cannot find user ' + str(username)}, 401
     if users[0][0] != username or users[0][1] != pash:
-        return {'error': 'Invalid Credentials', 'message': 'Incorrect Password for user ' + str(username)}, 400
+        return {'error': 'Invalid Credentials', 'message': 'Incorrect Password for user ' + str(username)}, 401
 
     token = jwt.encode({'Username': username, 'PasswordHash': pash}, SECRET_KEY, algorithm='HS256'),
     return {'token': token}, 200
