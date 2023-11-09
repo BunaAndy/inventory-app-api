@@ -15,6 +15,9 @@ app = Flask(__name__)
 schema = JsonSchema(app)
 CORS(app)
 
+SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
+app.config['SECRET_KEY'] = SECRET_KEY
+
 # Ensures all endpoints will return successfully, even if an error occurs
 def protection_wrapper(func):
     @wraps(func)
@@ -115,13 +118,16 @@ def delete_project_items():
     return deleteProjectItems(items, projectNumber)
 
 @app.route('/modify_all_items', methods=['POST'])
-@schema.validate(items_schema)
+# @schema.validate(items_schema)
 @protection_wrapper
-@token_required
+# @token_required
 def modify_all_items():
+    print('Here')
     data = request.json
+    print(data)
     items = data['Entries']
     return modifyItems(items)
+    return {}, 200
 
 @app.route('/delete_all_items', methods=['POST'])
 @schema.validate(items_schema)

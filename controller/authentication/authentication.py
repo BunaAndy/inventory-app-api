@@ -17,7 +17,7 @@ def token_required(f):
                 'error': 'Unauthorized'
             }, 401
         try:
-            data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
             username = data['Username']
             password = data['PasswordHash']
             users = getUser(username)
