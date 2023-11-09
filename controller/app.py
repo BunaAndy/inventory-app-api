@@ -122,12 +122,9 @@ def delete_project_items():
 @protection_wrapper
 # @token_required
 def modify_all_items():
-    print('Here')
     data = request.json
-    print(data)
     items = data['Entries']
     return modifyItems(items)
-    return {}, 200
 
 @app.route('/delete_all_items', methods=['POST'])
 @schema.validate(items_schema)
