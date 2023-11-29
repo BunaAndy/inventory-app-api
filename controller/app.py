@@ -118,9 +118,9 @@ def delete_project_items():
     return deleteProjectItems(items, projectNumber)
 
 @app.route('/modify_all_items', methods=['POST'])
-# @schema.validate(items_schema)
+@schema.validate(items_schema)
 @protection_wrapper
-# @token_required
+@token_required
 def modify_all_items():
     data = request.json
     items = data['Entries']
@@ -171,6 +171,16 @@ def login_EP():
     username = data['Username']
     password = data['Password']
     return login(username, password)
+
+@app.route('/upload_BOM', methods=['POST'])
+@schema.validate(project_items_schema)
+@protection_wrapper
+@token_required
+def upload_BOM():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return uploadBOM(items, projectNumber)
 
 # --------- ERROR HANDLING ---------
 

@@ -31,12 +31,13 @@ def addItems(items):
             # Then if it does not, add the item to the db
              item['Barcode'],
              item['Name'],
-             item['Catalog']))
+             item['Catalog'],
+             item['Manufacturer']))
 
     query = f'''
     IF NOT EXISTS (SELECT 1 FROM All_Items WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))  
     BEGIN  
-        INSERT INTO All_Items values (?, ?, ?);
+        INSERT INTO All_Items values (?, ?, ?, ?);
     END '''
 
     with DBCursor() as cursor:
@@ -52,6 +53,7 @@ def updateItems(items):
             # Then if it does, update the values
              item['Barcode'],
              item['Catalog'],
+             item['Manufacturer'],
             # Where they match the criteria
              item['Name']))
     query = f'''
@@ -59,7 +61,8 @@ def updateItems(items):
     BEGIN  
         UPDATE All_Items  
         SET Barcode = ?,
-        Catalog = ?
+        Catalog = ?,
+        Manufacturer = ?
         WHERE Name = ?;
     END '''
 
@@ -75,6 +78,7 @@ def updateItems(items):
             # Then if it does, update the values
              item['Barcode'],
              item['Catalog'],
+             item['Manufacturer'],
             # Where they match the criteria
              item['Name']))
 
@@ -83,7 +87,8 @@ def updateItems(items):
     BEGIN  
         UPDATE Project_Items  
         SET Barcode = ?,
-        Catalog = ?
+        Catalog = ?,
+        Manufacturer = ?
         WHERE Name = ?;
     END '''
 
@@ -152,7 +157,8 @@ def addProjectItems(items, projectNumber):
              projectNumber,
              item['Quantity'],
              item['Quantity Needed'],
-             item['Catalog']))
+             item['Catalog'],
+             item['Manufacturer']))
 
     query = f'''
     IF NOT EXISTS (SELECT 1 FROM Project_Items WHERE 
@@ -161,7 +167,7 @@ def addProjectItems(items, projectNumber):
         OR (Catalog = ? AND NOT Catalog = ''))
         AND Project = ?)  
     BEGIN  
-        INSERT INTO Project_Items values (?, ?, ?, ?, ?, ?);
+        INSERT INTO Project_Items values (?, ?, ?, ?, ?, ?, ?);
     END '''
 
     with DBCursor() as cursor:
@@ -294,7 +300,7 @@ def getAllProjects():
 
 def addProject(projectNumber, projectName):
     createdDate = datetime.date.today()
-    query = 'INSERT INTO Projects VALUES (?, ?, ?)'
+    query = 'INSERT INTO Projects VALUES (?, ?, ?, 0)'
     with DBCursor() as cursor:
         cursor.makeQuery(query, projectNumber, projectName, createdDate)
     return
@@ -318,9 +324,7 @@ def removeProjects(projects):
     
     params = []
     for proj in projects:
-        params.append(
-            (proj['Project Number']))
-
+        params.append([(proj['Project Number'])])
     query = '''
     DELETE FROM Project_Items
     WHERE Project = ?
@@ -335,12 +339,14 @@ def updateProjects(projects):
         if (proj['Project Name'] == 'Inventory'):
             continue
         params.append(
-            (proj['Project Name'], 
+            (proj['Project Name'],
+             proj['Bill Of Materials Added'], 
              proj['Project Number']))
 
     query = '''
         UPDATE Projects
-        SET ProjectName = ? 
+        SET ProjectName = ?,
+        BillOfMaterialsAdded = ?
         WHERE ProjectNumber = ?'''
     
     with DBCursor() as cursor:

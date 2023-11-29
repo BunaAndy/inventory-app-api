@@ -15,10 +15,13 @@ project_item_schema = {
         },
         'Catalog': {
             'type': 'string'
+        },
+        'Manufacturer': {
+            'type': 'string'
         }
     },
     'required': [
-        'Barcode', 'Name', 'Quantity', 'Quantity Needed', 'Catalog'
+        'Barcode', 'Name', 'Quantity', 'Quantity Needed', 'Catalog', 'Manufacturer'
     ]
 }
 
@@ -43,6 +46,9 @@ project_schema = {
         },
         'Project Name': {
             'type': 'string'
+        },
+        'BOM Added': {
+            'type': 'boolean'
         }
     },
     'required': [
@@ -74,10 +80,13 @@ item_schema = {
         },
         'Catalog': {
             'type': 'string'
+        },
+        'Manufacturer': {
+            'type': 'string'
         }
     },
     'required': [
-        'Barcode', 'Name', 'Catalog'
+        'Barcode', 'Name', 'Catalog', 'Manufacturer'
     ]
 }
 

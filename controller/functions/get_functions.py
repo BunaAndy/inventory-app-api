@@ -85,6 +85,7 @@ def getProjectItems(projectNumber):
         'projectNumber': projectNumber,
         'projectName': projectName,
         'columns': projectCols,
+        'bom': bool(project['Bill Of Materials Added']),
         'success': True}
     return response, 200
 
