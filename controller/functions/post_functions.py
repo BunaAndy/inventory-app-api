@@ -88,7 +88,8 @@ def modifyProjectItems(items, projectNumber):
     
     # Update Items
     try:
-        db.updateProjectItems(items, projectNumber)
+        db.updatePIQuantity(items, projectNumber)
+        db.updatePIQuantityNeeded(items, projectNumber)
     except Exception as e:
         print(str(e))
         return {
@@ -170,19 +171,14 @@ def uploadBOM(items, projectNumber):
     project = projs[0]
     project['Bill Of Materials Added'] = True
 
-    prevItems = getProjectItems(projectNumber)[0]['entries']
-    prevDict = {}
-    for item in prevItems:
-        prevDict[item['Name'] + item['Catalog']] = item
+    try:
+        db.updatePIQuantityNeeded(items, projectNumber)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Update Items Error', 
+            'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
 
-    updateList = []
-
-    for item in items:
-        if str(item['Name'] + item['Catalog']) in list(prevDict.keys()):
-            item['Quantity'] = prevDict[item['Name'] + item['Catalog']]['Quantity']
-            updateList.append(item)
-
-    modifyProjectItems(updateList, projectNumber)
     addProjectItems(items, projectNumber)
     modifyProjects([project])
 
