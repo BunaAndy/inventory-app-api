@@ -157,7 +157,6 @@ def pullFromStock(items, projectNumber):
     return response
 
 def uploadBOM(items, projectNumber):
-    print('1')
     try:
         projs = db.getProject(projectNumber)
     except Exception as e:
@@ -168,17 +167,24 @@ def uploadBOM(items, projectNumber):
         return {
             'error': 'Project not Found', 
             'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
-    print('2')
     project = projs[0]
     project['Bill Of Materials Added'] = True
 
-    print('3')
-    incrementProjectItems(items, projectNumber)
-    print('4')
+    prevItems = getProjectItems(projectNumber)[0]['entries']
+    prevDict = {}
+    for item in prevItems:
+        prevDict[item['Name'] + item['Catalog']] = item
+
+    updateList = []
+
+    for item in items:
+        if str(item['Name'] + item['Catalog']) in list(prevDict.keys()):
+            item['Quantity'] = prevDict[item['Name'] + item['Catalog']]['Quantity']
+            updateList.append(item)
+
+    modifyProjectItems(updateList, projectNumber)
     addProjectItems(items, projectNumber)
-    print('5')
     modifyProjects([project])
-    print('6')
 
     response = {'success': True}, 200
     return response

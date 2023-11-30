@@ -220,7 +220,7 @@ def updateProjectItems(items, projectNumber):
     query = f'''
     UPDATE Project_Items  
     SET Quantity = ?,
-    Quantity_Needed = ?
+    QuantityNeeded = ?
     WHERE ((Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))
     AND Project = ?;'''
 
