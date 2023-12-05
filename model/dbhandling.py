@@ -3,6 +3,7 @@ import hashlib
 import re
 import datetime
 from model.connection import DBCursor
+import os
 
 # --------- ALL ITEMS ---------
 
@@ -318,6 +319,17 @@ def getAllProjects():
         out.append(proj)
     return out
 
+def getArchivedProjects():
+    query = 'SELECT * FROM Archived_Projects'
+    with DBCursor() as cursor:
+        projs = makeEntryDicts(cursor.makeQuery(query), 'Archived_Projects')
+    out = []
+    for proj in projs:
+        proj["Date Created"] = str(proj["Date Created"].strftime("%a, %d %b %Y"))
+        proj["Date Archived"] = str(proj["Date Archived"].strftime("%a, %d %b %Y"))
+        out.append(proj)
+    return out
+
 def addProject(projectNumber, projectName):
     createdDate = datetime.date.today()
     query = 'INSERT INTO Projects VALUES (?, ?, ?, 0)'
@@ -325,13 +337,53 @@ def addProject(projectNumber, projectName):
         cursor.makeQuery(query, projectNumber, projectName, createdDate)
     return
 
-def removeProjects(projects):
+def archiveProjects(projects):
+    # Add to archived projects
+    params = []
+    for proj in projects:
+        time = datetime.date.today()
+        created = datetime.datetime.strptime(proj['Date Created'], "%a, %d %b %Y")
+        if (proj['Project Name'] == 'Inventory'):
+            continue
+        params.append(
+            (proj['Project Number'],
+             proj['Project Name'], 
+             created,
+             time))
+
+    query = 'INSERT INTO Archived_Projects VALUES (?, ?, ?, ?)'
+    
+    with DBCursor() as cursor:
+        cursor.makeManyQueries(query, params)
+
+    # Write CSV
+    
+    for proj in projects:
+        if len(proj) > 0:
+            csvString = ''
+            cols = ''
+            columns = proj[0].keys()
+            for col in columns:
+                cols = cols + col + ','
+            csvString = cols[0:len(cols)-1] + '\n'
+            for item in proj:
+                entry = ''
+                for info in item.keys():
+                    entry = entry + str(item[info]) + ','
+                entry = entry[0:len(entry) - 1] 
+                csvString = csvString + entry + '\n'
+                csvString = csvString[0:len(csvString)]
+
+            with open("/archives/" + str(proj['Project Number']) + str(proj['Project Name']) + '.txt', 'w') as file:
+                file.write(csvString)
+
+    # Delete old project entry
     params = []
     for proj in projects:
         if (proj['Project Name'] == 'Inventory'):
             continue
         params.append(
-            (proj['Project Name'], 
+            (proj['Project Name'],
              proj['Project Number']))
 
     query = '''
@@ -342,6 +394,7 @@ def removeProjects(projects):
     with DBCursor() as cursor:
         cursor.makeManyQueries(query, params)
     
+    # Delete Project Items
     params = []
     for proj in projects:
         params.append([(proj['Project Number'])])

@@ -182,6 +182,57 @@ def upload_BOM():
     items = data['Entries']
     return uploadBOM(items, projectNumber)
 
+# @app.route('/test_write', methods=['GET'])
+# @schema.validate(project_items_schema)
+# @protection_wrapper
+# def test_write():
+#     item_list = [
+#         {
+#             'Barcode': 'i1',
+#             'Name': 'item1',
+#             'Quantity': 3,
+#             'Quantity Needed': 2,
+#             'Catalog': 'i1',
+#             'Manufacturer': 'Nvent',
+#         },
+#         {
+#             'Barcode': 'i2',
+#             'Name': 'item3',
+#             'Quantity': 4,
+#             'Quantity Needed': 1,
+#             'Catalog': 'i2',
+#             'Manufacturer': 'ABB',
+#         },
+#         {
+#             'Barcode': 'i3',
+#             'Name': 'item3',
+#             'Quantity': 10,
+#             'Quantity Needed': 10,
+#             'Catalog': 'i3',
+#             'Manufacturer': 'LCOM',
+#         }
+#     ]
+
+    
+#     if len(item_list) > 0:
+#         csvString = ''
+#         cols = ''
+#         columns = item_list[0].keys()
+#         for col in columns:
+#             cols = cols + col + ','
+#         csvString = cols[0:len(cols)-1] + '\n'
+#         for item in item_list:
+#             entry = ''
+#             for info in item.keys():
+#                 entry = entry + str(item[info]) + ','
+#             entry = entry[0:len(entry) - 1] 
+#             csvString = csvString + entry + '\n'
+#             csvString = csvString[0:len(csvString)]
+    
+#         with open("./archives/test.csv", 'w') as file:
+#             file.write(csvString)
+#     return {'success': True}, 200
+
 # --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)
