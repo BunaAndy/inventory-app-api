@@ -1,2 +1,3 @@
 model/connection_string.py
 **/__pycache__/*
+waitress-run.py
