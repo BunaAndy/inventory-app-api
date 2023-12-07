@@ -2,9 +2,8 @@ from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
+from flask import make_response
 import os
-import jwt
-import hashlib
 from model.schemas import *
 from controller.functions.get_functions import *
 from controller.functions.post_functions import *
@@ -181,6 +180,26 @@ def upload_BOM():
     projectNumber = str(request.args.get('projectNumber', default=''))
     items = data['Entries']
     return uploadBOM(items, projectNumber)
+
+@app.route('/get_archived_projects', methods=['GET'])
+@protection_wrapper
+def get_archived_projects():
+    return getArchivedProjects()
+
+@app.route('/download_archived_csv')
+@schema.validate(project_schema)
+@protection_wrapper
+def get_archived_csv():
+    print("here")
+    data = request.json
+    projectNumber = data['Project Number']
+    projectName = data['Project Name']
+
+    with open('../archives/' + str(projectNumber) + str(projectName) + '.csv') as file:
+        output = make_response(file.read())
+        output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        output.headers["Content-type"] = "text/csv"
+    return output
 
 # --------- ERROR HANDLING ---------
 
