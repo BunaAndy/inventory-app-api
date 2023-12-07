@@ -4,6 +4,7 @@ import re
 import datetime
 from model.connection import DBCursor
 import os
+from pathlib import Path
 
 # --------- ALL ITEMS ---------
 
@@ -357,6 +358,7 @@ def archiveProjects(projects):
         cursor.makeManyQueries(query, params)
 
     # Write CSV
+    Path("../archives").mkdir(parents=True, exist_ok=True)
     for proj in projects:
         projItems = getProjectItems(proj['Project Number'])
 
