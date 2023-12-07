@@ -189,15 +189,8 @@ def get_archived_projects():
 @schema.validate(project_schema)
 @protection_wrapper
 def get_archived_csv(filename):
-    print("here")
     Path("../archives").mkdir(parents=True, exist_ok=True)
-    print(app.root_path)
-    full_path = os.path.join(app.root_path, '../archives')
-    print(full_path)
-    # with open('../archives/' + str(filename) + '.csv') as file:
-    #     output = make_response(file.read())
-    #     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-    #     output.headers["Content-type"] = "text/csv"
+    full_path = os.path.join(app.root_path, '..\\..\\archives')
     return send_from_directory(full_path, filename)
 
 # --------- ERROR HANDLING ---------
