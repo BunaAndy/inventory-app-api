@@ -1,8 +1,7 @@
-from flask import Flask, jsonify
-from flask import request
+from pathlib import Path
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
-from flask import make_response
 import os
 from model.schemas import *
 from controller.functions.get_functions import *
@@ -186,20 +185,20 @@ def upload_BOM():
 def get_archived_projects():
     return getArchivedProjects()
 
-@app.route('/download_archived_csv')
+@app.route('/download_archived_csv/<path:filename>', methods=['GET'])
 @schema.validate(project_schema)
 @protection_wrapper
-def get_archived_csv():
+def get_archived_csv(filename):
     print("here")
-    data = request.json
-    projectNumber = data['Project Number']
-    projectName = data['Project Name']
-
-    with open('../archives/' + str(projectNumber) + str(projectName) + '.csv') as file:
-        output = make_response(file.read())
-        output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-        output.headers["Content-type"] = "text/csv"
-    return output
+    Path("../archives").mkdir(parents=True, exist_ok=True)
+    print(app.root_path)
+    full_path = os.path.join(app.root_path, '../archives')
+    print(full_path)
+    # with open('../archives/' + str(filename) + '.csv') as file:
+    #     output = make_response(file.read())
+    #     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    #     output.headers["Content-type"] = "text/csv"
+    return send_from_directory(full_path, filename)
 
 # --------- ERROR HANDLING ---------
 
