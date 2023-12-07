@@ -357,24 +357,24 @@ def archiveProjects(projects):
         cursor.makeManyQueries(query, params)
 
     # Write CSV
-    
     for proj in projects:
-        if len(proj) > 0:
+        projItems = getProjectItems(proj['Project Number'])
+
+        if len(projItems) > 0:
             csvString = ''
             cols = ''
-            columns = proj[0].keys()
+            columns = projItems[0].keys()
             for col in columns:
                 cols = cols + col + ','
             csvString = cols[0:len(cols)-1] + '\n'
-            for item in proj:
+            for item in projItems:
                 entry = ''
                 for info in item.keys():
-                    entry = entry + str(item[info]) + ','
+                    entry = entry + '\"' + str(item[info]).replace('\"', '\"\"') + '\",'
                 entry = entry[0:len(entry) - 1] 
                 csvString = csvString + entry + '\n'
-                csvString = csvString[0:len(csvString)]
-
-            with open("/archives/" + str(proj['Project Number']) + str(proj['Project Name']) + '.txt', 'w') as file:
+            csvString = csvString[0:len(csvString)]
+            with open("../archives/" + str(proj['Project Number']) + str(proj['Project Name']) + '.csv', 'w') as file:
                 file.write(csvString)
 
     # Delete old project entry
