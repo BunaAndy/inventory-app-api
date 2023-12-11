@@ -169,6 +169,12 @@ def uploadBOM(items, projectNumber):
             'error': 'Project not Found', 
             'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
     project = projs[0]
+
+    if project['Bill Of Materials Added']:
+        return {
+            'error': 'Cannot Reupload BOM', 
+            'message':'Project already has BOM, try using Reupload endpoint after logging in'}, 403
+
     project['Bill Of Materials Added'] = True
 
     try:
@@ -181,6 +187,32 @@ def uploadBOM(items, projectNumber):
 
     addProjectItems(items, projectNumber)
     modifyProjects([project])
+
+    response = {'success': True}, 200
+    return response
+
+def reuploadBOM(items, projectNumber):
+    try:
+        projs = db.getProject(projectNumber)
+    except Exception as e:
+        return {
+            'error': 'Get Project Error', 
+            'message':'Error finding project ' + str(projectNumber) + ': ' + str(e)}, 500
+    if len(projs) == 0:
+        return {
+            'error': 'Project not Found', 
+            'message':'No project with number: ' + str(projectNumber) + ' found'}, 404
+    project = projs[0]
+
+    try:
+        db.updatePIQuantityNeeded(items, projectNumber)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Update Items Error', 
+            'message':'Error updating items in project : ' + str(projectNumber) + ', ' + str(e)}, 500
+
+    addProjectItems(items, projectNumber)
 
     response = {'success': True}, 200
     return response
@@ -248,7 +280,7 @@ def deleteItems(items):
     response = {'success': True}, 200
     return response
 
-# USers
+# Users
 
 def login(username, password):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
