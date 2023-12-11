@@ -243,7 +243,7 @@ def modifyProjects(items):
 
 def deleteProjects(items):
     try:
-        db.removeProjects(items)
+        db.archiveProjects(items)
     except Exception as e:
         print(str(e))
         return {
