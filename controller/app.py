@@ -190,7 +190,7 @@ def reupload_BOM():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
     items = data['Entries']
-    return uploadBOM(items, projectNumber)
+    return reuploadBOM(items, projectNumber)
 
 # --------- ERROR HANDLING ---------
 
