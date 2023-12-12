@@ -173,7 +173,7 @@ def uploadBOM(items, projectNumber):
     if project['Bill Of Materials Added']:
         return {
             'error': 'Cannot Reupload BOM', 
-            'message':'Project already has BOM, try using Reupload endpoint after logging in'}, 403
+            'message':'Project already has BOM, try using Reupload endpoint after logging in'}, 401
 
     project['Bill Of Materials Added'] = True
 

@@ -17,7 +17,14 @@ def token_required(f):
                 'error': 'Unauthorized'
             }, 401
         try:
-            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            try:
+                data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            except Exception as e:
+                return {
+                    'message': 'Invalid Authentication token!',
+                    'data': None,
+                    'error': 'Unauthorized'
+                }, 403
             username = data['Username']
             password = data['PasswordHash']
             users = getUser(username)
