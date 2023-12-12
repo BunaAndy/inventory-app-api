@@ -140,3 +140,28 @@ def getProjects():
         'columns': projectCols, 
         'success': True}
     return response, 200
+
+def getArchivedProjects():
+    try:
+        projects = db.getArchivedProjects()
+    except Exception as e:
+        print(e)
+        return {
+            'error': 'Get Projects Error',
+            'message':'Error fetching all projects: ' + str(e)}, 500
+    try:
+        projectCols = db.getColumns('Archived_Projects')
+    except Exception as e:
+        print(e)
+        return {
+            'error': 'Get Columns Error',
+            'message':'Error fetching columns of archived projects' + ': ' + str(e)}, 500
+    
+    response = {
+        'entries': projects, 
+        'projectNumber': 'Archived Projects', 
+        'projectName': 'Archived Projects', 
+        'columns': projectCols, 
+        'success': True}
+    
+    return response, 200

@@ -1,10 +1,8 @@
-from flask import Flask, jsonify
-from flask import request
+from pathlib import Path
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
 import os
-import jwt
-import hashlib
 from model.schemas import *
 from controller.functions.get_functions import *
 from controller.functions.post_functions import *
@@ -170,6 +168,19 @@ def upload_BOM():
     projectNumber = str(request.args.get('projectNumber', default=''))
     items = data['Entries']
     return uploadBOM(items, projectNumber)
+
+@app.route('/get_archived_projects', methods=['GET'])
+@protection_wrapper
+def get_archived_projects():
+    return getArchivedProjects()
+
+@app.route('/download_archived_csv/<path:filename>', methods=['GET'])
+@schema.validate(project_schema)
+@protection_wrapper
+def get_archived_csv(filename):
+    Path("../archives").mkdir(parents=True, exist_ok=True)
+    full_path = os.path.join(app.root_path, '..\\..\\archives')
+    return send_from_directory(full_path, filename)
 
 @app.route('/reupload_BOM', methods=['POST'])
 @schema.validate(project_items_schema)
