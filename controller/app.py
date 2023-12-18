@@ -68,7 +68,6 @@ def get_projects():
 @app.route('/add_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
-@token_required
 def add_project_items():
     data = request.json
     items = data['Entries']
@@ -78,7 +77,6 @@ def add_project_items():
 @app.route('/add_project', methods=['POST'])
 @schema.validate(project_schema)
 @protection_wrapper
-@token_required
 def add_project():
     data = request.json
     projectNumber = data['Project Number']
@@ -88,7 +86,6 @@ def add_project():
 @app.route('/increment_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
-@token_required
 def increment_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -98,7 +95,6 @@ def increment_project_items():
 @app.route('/modify_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
-@token_required
 def modify_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -108,7 +104,6 @@ def modify_project_items():
 @app.route('/delete_project_items', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
-@token_required
 def delete_project_items():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -118,7 +113,6 @@ def delete_project_items():
 @app.route('/modify_all_items', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
-@token_required
 def modify_all_items():
     data = request.json
     items = data['Entries']
@@ -127,7 +121,6 @@ def modify_all_items():
 @app.route('/delete_all_items', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
-@token_required
 def delete_all_items():
     data = request.json
     items = data['Entries']
@@ -136,7 +129,6 @@ def delete_all_items():
 @app.route('/modify_projects', methods=['POST'])
 @schema.validate(projects_schema)
 @protection_wrapper
-@token_required
 def modify_projects():
     data = request.json
     items = data['Entries']
@@ -145,7 +137,6 @@ def modify_projects():
 @app.route('/delete_projects', methods=['POST'])
 @schema.validate(projects_schema)
 @protection_wrapper
-@token_required
 def delete_projects():
     data = request.json
     items = data['Entries']
@@ -154,7 +145,6 @@ def delete_projects():
 @app.route('/pull_from_stock', methods=['POST'])
 @schema.validate(items_schema)
 @protection_wrapper
-@token_required
 def pull_from_stock():
     data = request.json
     items = data['Entries']
@@ -173,7 +163,6 @@ def login_EP():
 @app.route('/upload_BOM', methods=['POST'])
 @schema.validate(project_items_schema)
 @protection_wrapper
-@token_required
 def upload_BOM():
     data = request.json
     projectNumber = str(request.args.get('projectNumber', default=''))
@@ -192,6 +181,16 @@ def get_archived_csv(filename):
     Path("../archives").mkdir(parents=True, exist_ok=True)
     full_path = os.path.join(app.root_path, '..\\..\\archives')
     return send_from_directory(full_path, filename)
+
+@app.route('/reupload_BOM', methods=['POST'])
+@schema.validate(project_items_schema)
+@protection_wrapper
+@token_required
+def reupload_BOM():
+    data = request.json
+    projectNumber = str(request.args.get('projectNumber', default=''))
+    items = data['Entries']
+    return reuploadBOM(items, projectNumber)
 
 # --------- ERROR HANDLING ---------
 
