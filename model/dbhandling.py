@@ -51,21 +51,25 @@ def updateItems(items):
     for item in items:
         params.append(
             # First, ensure item exists
-            (item['Name'],
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
             # Then if it does, update the values
              item['Barcode'],
              item['Catalog'],
              item['Manufacturer'],
             # Where they match the criteria
-             item['Name']))
+             item['Barcode'],
+             item['Name'],
+             item['Catalog']))
     query = f'''
-    IF EXISTS (SELECT 1 FROM All_Items WHERE Name = ?)  
+    IF EXISTS (SELECT 1 FROM All_Items WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))  
     BEGIN  
         UPDATE All_Items  
         SET Barcode = ?,
         Catalog = ?,
         Manufacturer = ?
-        WHERE Name = ?;
+        WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = '');
     END '''
 
     with DBCursor() as cursor:
@@ -76,22 +80,26 @@ def updateItems(items):
     for item in items:
         params.append(
             # First, ensure item exists
-            (item['Name'],
+            (item['Barcode'],
+             item['Name'],
+             item['Catalog'],
             # Then if it does, update the values
              item['Barcode'],
              item['Catalog'],
              item['Manufacturer'],
             # Where they match the criteria
-             item['Name']))
+             item['Barcode'],
+             item['Name'],
+             item['Catalog']))
 
     query = query = f'''
-    IF EXISTS (SELECT 1 FROM Project_Items WHERE Name = ?)  
+    IF EXISTS (SELECT 1 FROM Project_Items WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = ''))  
     BEGIN  
         UPDATE Project_Items  
         SET Barcode = ?,
         Catalog = ?,
         Manufacturer = ?
-        WHERE Name = ?;
+        WHERE (Barcode = ? AND NOT Barcode = '') OR Name = ? OR (Catalog = ? AND NOT Catalog = '');
     END '''
 
     with DBCursor() as cursor:

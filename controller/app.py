@@ -192,6 +192,15 @@ def reupload_BOM():
     items = data['Entries']
     return reuploadBOM(items, projectNumber)
 
+@app.route('/upload_catalog', methods=['POST'])
+@schema.validate(items_schema)
+@protection_wrapper
+@token_required
+def upload_catalog():
+    data = request.json
+    items = data['Entries']
+    return uploadCatalog(items)
+
 # --------- ERROR HANDLING ---------
 
 @app.errorhandler(JsonValidationError)

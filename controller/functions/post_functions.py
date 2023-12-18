@@ -280,7 +280,27 @@ def deleteItems(items):
     response = {'success': True}, 200
     return response
 
-# Users
+def uploadCatalog(items):
+    # Modify Existing Items
+    try:
+        db.updateItems(items)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Updating Items Error', 
+            'message':'Error updating items from catalog: ' + str(e)}, 500
+    # Add Items
+    try:
+        db.addItems(items)
+    except Exception as e:
+        print(str(e))
+        return {
+            'error': 'Adding Items Error', 
+            'message':'Error adding items from catalog: ' + str(e)}, 500
+    response = {'success': True}, 200
+    return response
+
+# --------- USERS ---------
 
 def login(username, password):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
