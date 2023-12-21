@@ -2,7 +2,7 @@ import model.dbhandling as db
 from controller.functions.get_functions import *
 import hashlib
 import jwt
-import os
+from model.connection_string import secret
 
 
 # --------- PROJECT ITEMS ---------
@@ -303,7 +303,6 @@ def uploadCatalog(items):
 # --------- USERS ---------
 
 def login(username, password):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
     cipher = hashlib.sha256()
     cipher.update(str(password).encode())
     pash = cipher.hexdigest()[:16]
@@ -320,5 +319,5 @@ def login(username, password):
     if users[0][0] != username or users[0][1] != pash:
         return {'error': 'Invalid Credentials', 'message': 'Incorrect Password for user ' + str(username)}, 401
 
-    token = jwt.encode({'Username': username, 'PasswordHash': pash}, SECRET_KEY, algorithm='HS256'),
+    token = jwt.encode({'Username': username, 'PasswordHash': pash}, secret, algorithm='HS256'),
     return {'token': token}, 200

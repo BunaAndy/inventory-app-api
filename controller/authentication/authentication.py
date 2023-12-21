@@ -3,6 +3,7 @@ import jwt
 from flask import request, jsonify
 from flask import current_app
 from model.dbhandling import *
+from model.connection_string import secret
 
 def token_required(f):
     @wraps(f)
@@ -18,7 +19,7 @@ def token_required(f):
             }, 401
         try:
             try:
-                data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+                data = jwt.decode(token, secret, algorithms=['HS256'])
             except Exception as e:
                 return {
                     'message': 'Invalid Authentication token!',

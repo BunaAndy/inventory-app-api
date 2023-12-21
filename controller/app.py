@@ -13,9 +13,6 @@ app = Flask(__name__)
 schema = JsonSchema(app)
 CORS(app)
 
-SECRET_KEY = os.environ.get('SECRET_KEY') or 'this is a secret'
-app.config['SECRET_KEY'] = SECRET_KEY
-
 # Ensures all endpoints will return successfully, even if an error occurs
 def protection_wrapper(func):
     @wraps(func)
